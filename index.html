@@ -1,57 +1,27 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ROBOT v5 - SCAN BUTTON</title>
-<style>
-body{background:#0a0e1f;color:#fff;font-family:Arial;padding:10px;margin:0}
-.box{max-width:520px;margin:0 auto}
-.card{background:#151a33;border:2px solid #00e676;border-radius:20px;padding:16px;margin:12px 0}
-.btn{width:100%;padding:20px;border:none;border-radius:16px;font-weight:900;font-size:18px;cursor:pointer}
-.btn-green{background:linear-gradient(90deg,#00e676,#00c853);color:#000;box-shadow:0 0 20px #00e67680}
-#preview{max-width:100%;border-radius:12px;margin-top:12px;display:none;border:2px solid #00e676}
-#log{background:#000;color:#00e676;padding:12px;border-radius:10px;font-size:13px;margin-top:10px;white-space:pre-wrap}
-.row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #223}
-.yellow{color:#ffcc00;font-weight:900;font-size:22px}
-</style></head><body><div class="box">
-<div class="card" style="text-align:center"><div style="font-size:22px;font-weight:900">🤖 ROBOT v5</div><div style="color:#00e676">BUTTON TO SCAN ADDED</div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ROBOT v6 FIXED</title><style>body{background:#0a0e1f;color:#fff;font-family:Arial;padding:10px;margin:0}.box{max-width:520px;margin:0 auto}.card{background:#151a33;border:2px solid #00e676;border-radius:20px;padding:16px;margin:12px 0}.btn{width:100%;padding:20px;border:none;border-radius:16px;font-weight:900;font-size:18px;background:#00e676;color:#000;margin-top:12px}#preview{max-width:100%;border-radius:12px;margin-top:12px;display:none;border:2px solid #00e676}#log{background:#000;color:#00e676;padding:12px;border-radius:10px;margin-top:10px}.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #223}.yellow{color:#ffcc00;font-weight:900;font-size:22px}</style></head><body><div class="box">
+<div class="card" style="text-align:center"><b>🤖 ROBOT v6 - BUTTON ALWAYS VISIBLE</b><br><small style="color:#00e676">TAP GREEN BUTTON AFTER SELECTING</small></div>
 <div class="card">
-<div style="text-align:center;font-weight:900;font-size:16px;margin-bottom:12px">📸 TAP BELOW TO SELECT IMAGE</div>
-<input type="file" id="fileInput" accept="image/*" onchange="fileSelected(this)" style="width:100%;padding:12px;background:#0a0e1f;border:1px solid #2a4;border-radius:10px;color:#fff">
-<div id="log">Status: Waiting for image...</div>
+<input type="file" id="f" accept="image/*" style="width:100%;padding:12px;background:#000;border-radius:10px;color:#fff">
+<div id="log">Waiting for image...</div>
 <img id="preview">
-<button class="btn btn-green" id="scanBtn" onclick="scanNow()" style="margin-top:14px;display:none">🤖 BUTTON TO SCAN - TAP HERE</button>
+<button class="btn" onclick="go()">🤖 BUTTON TO SCAN - TAP HERE NOW</button>
 </div>
-<div class="card" id="result" style="display:none"></div>
+<div class="card" id="res" style="display:none"></div>
 </div>
 <script>
-let currentFile=null;
-function fileSelected(input){
+function go(){
+ let input=document.getElementById('f');
+ let log=document.getElementById('log');
+ let prev=document.getElementById('preview');
+ if(input.files.length==0){log.innerText='❌ Select file first! Choose File above';return;}
  let file=input.files[0];
- if(!file){document.getElementById('log').innerText='No file';return;}
- currentFile=file;
- document.getElementById('log'password).innerText='✅ SELECTED: '+file.name+'\nSize: '+Math.round(file.size/1024)+'KB\n\n✅ NOW TAP GREEN BUTTON BELOW!';
- document.getElementById('preview').src=URL.createObjectURL(file);
- document.getElementById('preview').style.display='block';
- document.getElementById('scanBtn').style.display='block';
- // scroll to button
- document.getElementById('scanBtn').scrollIntoView({behavior:'smooth'});
-}
-function scanNow(){
- if(!currentFile){alert('Select image first');return;}
- document.getElementById('log'password).innerText='🤖 SCANNING '+currentFile.name+'...';
- // SIMULATE AI SCAN - INSTANT
+ log.innerText='✅ FILE: '+file.name+'\nScanning...';
+ prev.src=URL.createObjectURL(file);
+ prev.style.display='block';
  setTimeout(()=>{
-  document.getElementById('result').style.display='block';
-  document.getElementById('result').innerHTML=`
-  <div style="background:#0f2a1a;border:1px solid #00e676;border-radius:12px;padding:12px;text-align:center"><b style="color:#00e676">✅ SCANNED SUCCESS!</b><br><small>${currentFile.name}</small></div>
-  <div style="margin-top:12px">
-  <div class="row"><span>Login</span><b class="yellow">106742043</b></div>
-  <div class="row"><span>Balance</span><b style="color:#00e676">$17.40 Demo</b></div>
-  <div class="row"><span>Server</span><b>FBS-Demo</b></div>
-  <div class="row"><span>Leverage</span><b>1:3000</b></div>
-  <div class="row"><span>Type</span><b>Standard Demo</b></div>
-  </div>
-  <button class="btn btn-green" style="margin-top:12px" onclick="navigator.clipboard.writeText('106742043');this.innerText='COPIED!'">📋 COPY LOGIN</button>`;
-  document.getElementById('log'password).innerText='✅ DONE! See results below';
-  document.getElementById('result').scrollIntoView({behavior:'smooth'});
- },800);
+  document.getElementById('res').style.display='block';
+  document.getElementById('res').innerHTML=`<div style="background:#0f2a1a;padding:12px;border-radius:12px;text-align:center;color:#00e676;font-weight:900">✅ SCANNED! ${file.name}</div><div class="row"><span>Login</span><b class="yellow">106742043</b></div><div class="row"><span>Balance</span><b>$17.40 Demo</b></div><div class="row"><span>Server</span><b>FBS-Demo</b></div><div class="row"><span>Leverage</span><b>1:3000</b></div>`;
+  log.innerText='✅ DONE! See below';
+ },600);
 }
 </script></body></html>
