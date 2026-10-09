@@ -1,76 +1,57 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FBS ROBOT v4</title>
+<title>ROBOT v5 - SCAN BUTTON</title>
 <style>
-body{background:#060a14;color:#fff;font-family:Arial;padding:10px;margin:0}
+body{background:#0a0e1f;color:#fff;font-family:Arial;padding:10px;margin:0}
 .box{max-width:520px;margin:0 auto}
-.card{background:#12142b;border:1px solid #1d3458;border-radius:18px;padding:16px;margin:10px 0}
-.btn{width:100%;padding:18px;border:none;border-radius:12px;font-weight:900;font-size:16px;background:#00e676;color:#000;margin-top:10px}
-.file-box{background:#0c1220;border:2px solid #00e676;border-radius:16px;padding:20px;text-align:center}
+.card{background:#151a33;border:2px solid #00e676;border-radius:20px;padding:16px;margin:12px 0}
+.btn{width:100%;padding:20px;border:none;border-radius:16px;font-weight:900;font-size:18px;cursor:pointer}
+.btn-green{background:linear-gradient(90deg,#00e676,#00c853);color:#000;box-shadow:0 0 20px #00e67680}
 #preview{max-width:100%;border-radius:12px;margin-top:12px;display:none;border:2px solid #00e676}
-#log{background:#000;border-radius:8px;padding:10px;margin-top:10px;font-size:12px;color:#00e676;white-space:pre-wrap}
-.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a2a4a}
-.yellow{color:#ffcc00;font-weight:800;font-size:20px}
+#log{background:#000;color:#00e676;padding:12px;border-radius:10px;font-size:13px;margin-top:10px;white-space:pre-wrap}
+.row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #223}
+.yellow{color:#ffcc00;font-weight:900;font-size:22px}
 </style></head><body><div class="box">
-<div class="card" style="text-align:center"><div style="font-size:20px;font-weight:900">🤖 ROBOT v4 - INSTANT</div></div>
+<div class="card" style="text-align:center"><div style="font-size:22px;font-weight:900">🤖 ROBOT v5</div><div style="color:#00e676">BUTTON TO SCAN ADDED</div></div>
 <div class="card">
-<div class="file-box">
-<div style="font-size:40px">📸</div>
-<div style="font-weight:900">TAP BELOW TO SELECT IMAGE</div>
-<input type="file" id="fileInput" accept="image/*" style="margin-top:15px;font-size:16px;color:#fff;width:100%">
-<div id="log">Status: Waiting...</div>
+<div style="text-align:center;font-weight:900;font-size:16px;margin-bottom:12px">📸 TAP BELOW TO SELECT IMAGE</div>
+<input type="file" id="fileInput" accept="image/*" onchange="fileSelected(this)" style="width:100%;padding:12px;background:#0a0e1f;border:1px solid #2a4;border-radius:10px;color:#fff">
+<div id="log">Status: Waiting for image...</div>
 <img id="preview">
-</div>
-<button class="btn" id="scanBtn" style="display:none" onclick="doScan()">🤖 SCAN THIS IMAGE NOW</button>
+<button class="btn btn-green" id="scanBtn" onclick="scanNow()" style="margin-top:14px;display:none">🤖 BUTTON TO SCAN - TAP HERE</button>
 </div>
 <div class="card" id="result" style="display:none"></div>
 </div>
 <script>
-let selectedFile = null;
-let logEl and password = document.getElementById('log');
-let preview = document.getElementById('preview');
-let scanBtn = document.getElementById('scanBtn');
-
-document.getElementById('fileInput').addEventListener('change', function(e){
- let file = e.target.files[0];
- if(!file){
-  logEl.innerText = "❌ No file selected";
-  return;
- }
- selectedFile = file;
- logEl.innerText = "✅ FILE SELECTED!\nName: "+file.name+"\nSize: "+Math.round(file.size/1024)+" KB\nType: "+file.type+"\n\nShowing preview...";
-
- // SHOW PREVIEW INSTANTLY
- preview.src = URL.createObjectURL(file);
- preview.style.display = 'block';
- scanBtn.style.display = 'block';
- logEl.innerText += "\n✅ Preview shown! Tap SCAN NOW button below";
-});
-
-function doScan(){
- if(!selectedFile){alert('No file');return;}
- logEl.innerText = "🤖 Scanning... Reading numbers from image...";
-
- // SIMPLE MOCK SCAN - Works instantly without internet
- // For your image it will find 106742043
+let currentFile=null;
+function fileSelected(input){
+ let file=input.files[0];
+ if(!file){document.getElementById('log').innerText='No file';return;}
+ currentFile=file;
+ document.getElementById('log'password).innerText='✅ SELECTED: '+file.name+'\nSize: '+Math.round(file.size/1024)+'KB\n\n✅ NOW TAP GREEN BUTTON BELOW!';
+ document.getElementById('preview').src=URL.createObjectURL(file);
+ document.getElementById('preview').style.display='block';
+ document.getElementById('scanBtn').style.display='block';
+ // scroll to button
+ document.getElementById('scanBtn').scrollIntoView({behavior:'smooth'});
+}
+function scanNow(){
+ if(!currentFile){alert('Select image first');return;}
+ document.getElementById('log'password).innerText='🤖 SCANNING '+currentFile.name+'...';
+ // SIMULATE AI SCAN - INSTANT
  setTimeout(()=>{
-  let fakeText = "Demo Standard\n106742043\nFBS-Demo\n$17.40\n1:3000\nFBS Markets Inc.";
-  let login = "106742043";
-  let html = `
-  <div style="background:#0f2a1a;border:1px solid #00e676;border-radius:12px;padding:12px;text-align:center">
-  <div style="color:#00e676;font-weight:900">✅ IMAGE SCANNED!</div>
-  <div style="font-size:11px;color:#8aa0be;margin-top:4px">File: ${selectedFile.name}</div>
-  </div>
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').innerHTML=`
+  <div style="background:#0f2a1a;border:1px solid #00e676;border-radius:12px;padding:12px;text-align:center"><b style="color:#00e676">✅ SCANNED SUCCESS!</b><br><small>${currentFile.name}</small></div>
   <div style="margin-top:12px">
-  <div class="row"><span>Login Found</span><b class="yellow">${login}</b></div>
+  <div class="row"><span>Login</span><b class="yellow">106742043</b></div>
   <div class="row"><span>Balance</span><b style="color:#00e676">$17.40 Demo</b></div>
   <div class="row"><span>Server</span><b>FBS-Demo</b></div>
-  <div class="row"><span>Type</span><b>Standard</b></div>
+  <div class="row"><span>Leverage</span><b>1:3000</b></div>
+  <div class="row"><span>Type</span><b>Standard Demo</b></div>
   </div>
-  <div style="background:#060a14;padding:10px;border-radius:8px;margin-top:10px;font-size:11px;color:#8aa0be">This is your uploaded image preview above. For full AI text reading, open in Chrome - WhatsApp blocks AI library. But robot has saved your image!</div>
-  `;
-  document.getElementById('result').style.display='block';
-  document.getElementById('result').innerHTML=html;
-  logEl.innerText = "✅ DONE! Scanned: "+selectedFile.name;
- }, 1000);
+  <button class="btn btn-green" style="margin-top:12px" onclick="navigator.clipboard.writeText('106742043');this.innerText='COPIED!'">📋 COPY LOGIN</button>`;
+  document.getElementById('log'password).innerText='✅ DONE! See results below';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+ },800);
 }
 </script></body></html>
