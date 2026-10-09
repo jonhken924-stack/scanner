@@ -1,119 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FBS SCANNER v1 - ACCOUNT FINDER</title>
-<style>
-body{background:#060a14;color:#fff;font-family:Arial;padding:12px}
-.box{max-width:500px;margin:0 auto}
-.card{background:#12142b;border:1px solid #1d3458;border-radius:16px;padding:16px;margin-top:12px}
-.btn{width:100%;padding:16px;border:none;border-radius:12px;font-weight:900;font-size:14px;background:linear-gradient(90deg,#00e676,#00b248);color:#000;cursor:pointer}
-.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a2a4a;font-size:13px}
-.wait{background:#1a1a2a;color:#888;border:1px dashed #444;border-radius:12px;padding:16px;text-align:center}
-.found{background:linear-gradient(135deg,#0f2a1a,#0a1a0f);border:1px solid #00e676;border-radius:12px;padding:12px}
-</style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js" async defer></script>
-</head>
-<body>
-<div class="box">
-<div class="card" style="text-align:center">
-<div style="color:#00e676;font-weight:800;font-size:11px">🤖 FBS SCANNER v1 - PRIVATE</div>
-<div style="font-size:20px;font-weight:900;margin:8px 0">Find Your FBS Accounts</div>
-<div style="font-size:11px;color:#8aa0be">Scans Gmail for FBS only • Runs in your browser only</div>
-</div>
-
-<div class="card">
-<button class="btn" id="authBtn" onclick="auth()">🔐 CONNECT GMAIL SECURELY</button>
-<div style="font-size:10px;color:#7a8aa3;margin-top:8px;text-align:center">Uses Google official login - I never see your password or emails</div>
-</div>
-
-<div class="card" id="status" style="display:none">
-<div id="sText" class="wait">Scanning...</div>
-<div id="results"></div>
-</div>
-
-<div class="card">
-<div style="font-size:11px;font-weight:800;color:#ffcc00">⚠️ SETUP 1 TIME (2 min):</div>
-<div style="font-size:11px;color:#ccc;line-height:1.5;margin-top:8px">
-1. Go to console.cloud.google.com<br>
-2. Create project → Enable Gmail API<br>
-3. Create OAuth Client ID (Web) → Add your github URL to allowed origins<br>
-4. Copy Client ID and paste below<br>
-</div>
-<input id="cid" placeholder="Paste Google Client ID here (xxxx.apps.googleusercontent.com)" style="width:100%;padding:10px;border-radius:8px;background:#0c1220;border:1px solid #1d3458;color:#fff;margin-top:10px;font-size:11px">
-<button onclick="saveId()" style="width:100%;padding:8px;margin-top:6px;border-radius:8px;background:#1e355a;color:#fff;border:none;font-size:11px">Save ID</button>
-</div>
-</div>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBS SCANNER v2 - EASY</title><style>body{background:#060a14;color:#fff;font-family:Arial;padding:12px}
+.box{max-width:500px;margin:0 auto}.card{background:#12142b;border:1px solid #1d3458;border-radius:16px;padding:16px;margin-top:12px}
+.btn{width:100%;padding:16px;border:none;border-radius:12px;font-weight:900;background:linear-gradient(90deg,#00e676,#00b248)}
+textarea{width:100%;height:150px;background:#0c1220;color:#fff;border:1px solid #1d3458;border-radius:12px;padding:12px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a2a4a}
+</style></head><body><div class="box">
+<div class="card" style="text-align:center"><div style="color:#00e676;font-weight:800">🤖 FBS SCANNER v2 - NO SETUP</div><div style="font-size:18px;font-weight:900;margin-top:6px">Find FBS Accounts in 10 sec</div></div>
+<div class="card"><div style="font-size:12px;color:#ffcc00;font-weight:800">STEP 1: Go to Gmail app</div><div style="font-size:11px;color:#ccc;margin-top:6px">Search: <b>FBS</b><br>Open any FBS email (Welcome / Registration / Deposit)<br>Tap 3 dots > Copy text or take screenshot</div></div>
+<div class="card"><div style="font-size:12px;font-weight:800">STEP 2: Paste email text here</div><textarea id="txt" placeholder="Paste your FBS email here... Example: Welcome to FBS! Your MT4 account 12345678..."></textarea>
+<button class="btn" onclick="scan()" style="margin-top:10px">🔍 FIND MY ACCOUNT NUMBER</button></div>
+<div class="card" id="res" style="display:none"></div></div>
 <script>
-let tokenClient, accessToken=null;
-let CLIENT_ID = localStorage.getItem('fbs_cid') || '';
-
-function saveId(){
-  CLIENT_ID = document.getElementById('cid').value.trim();
-  localStorage.setItem('fbs_cid', CLIENT_ID);
-  alert('Saved! Now click CONNECT GMAIL');
+function scan(){
+ let t=document.getElementById('txt').value;
+ if(!t){alert('Paste FBS email first');return;}
+ let accounts=[...t.matchAll(/(?:account|login|MT4|MT5|ID)[^0-9]{0,15}([0-9]{5,10})/gi)].map(m=>m[1]);
+ let allNums=[...t.matchAll(/\b[0-9]{6,10}\b/g)].map(m=>m[0]);
+ let set=new Set([...accounts,...allNums]);
+ let html='<div style="background:#0f2a1a;border:1px solid #00e676;border-radius:12px;padding:12px"><div style="color:#00e676;font-weight:800">📋 FOUND ACCOUNTS:</div>';
+ if(set.size==0) html+='<div style="color:#ff6b6b;margin-top:8px">No numbers found, paste more text</div>';
+ else set.forEach(n=>{html+=`<div class="row"><span>Account:</span><b style="color:#ffcc00;font-size:18px">${n}</b></div>`});
+ html+=`</div><div style="margin-top:10px;font-size:11px;color:#8aa0be">Full details:</div><div style="background:#0c1220;border-radius:8px;padding:10px;margin-top:6px;font-size:11px;white-space:pre-wrap">${t.substring(0,1000)}</div>`;
+ document.getElementById('res').style.display='block';
+ document.getElementById('res').innerHTML=html;
 }
-if(CLIENT_ID) document.getElementById('cid').value=CLIENT_ID;
-
-function auth(){
-  if(!CLIENT_ID){ alert('Paste Client ID first - see setup below'); return; }
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/gmail.readonly',
-    callback: (res)=>{
-      accessToken=res.access_token;
-      scanFBS();
-    }
-  });
-  client.requestAccessToken();
-}
-
-async function scanFBS(){
-  document.getElementById('status').style.display='block';
-  document.getElementById('sText').innerHTML='🔍 Scanning Gmail for FBS...';
-  const headers={Authorization:'Bearer '+accessToken};
-  // search FBS emails
-  let r = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q=FBS%20OR%20fbs-account%20OR%20fbs.com&maxResults=50', {headers});
-  let data = await r.json();
-  if(!data.messages){ document.getElementById('sText').innerHTML='❌ No FBS emails found'; return; }
-  
-  let accounts = new Set();
-  let details=[];
-  for(let m of data.messages.slice(0,20)){
-    let mr = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=full`, {headers});
-    let md = await mr.json();
-    let snippet = md.snippet || '';
-    let body = JSON.stringify(md.payload).toLowerCase();
-    let text = snippet + ' ' + body;
-    // find account numbers 7-9 digits near fbs
-    let matches = text.match(/(account|login|mt4|mt5)[^0-9]{0,20}([0-9]{5,10})/gi);
-    if(matches) matches.forEach(x=>{
-      let num = x.match(/[0-9]{5,10}/); if(num) accounts.add(num[0]);
-    });
-    let nums = snippet.match(/\b[0-9]{6,10}\b/g);
-    if(nums) nums.forEach(n=>{ if(n.length>=6) accounts.add(n); });
-    details.push(snippet);
-  }
-  
-  document.getElementById('sText').innerHTML=`✅ Found ${accounts.size} possible FBS accounts`;
-  let html=`<div class="found"><div style="color:#00e676;font-weight:800;font-size:12px">📋 YOUR FBS ACCOUNTS FROM EMAIL:</div>`;
-  if(accounts.size===0){
-    html+=`<div class="row"><span>No numbers auto-found, check snippets below</span></div>`;
-  }else{
-    accounts.forEach(a=>{
-      html+=`<div class="row"><span>Account / Login:</span><b style="color:#ffcc00;font-size:16px">${a}</b></div>`;
-    });
-  }
-  html+=`</div><div style="margin-top:12px"><div style="font-size:11px;color:#8aa0be">Recent FBS emails:</div>`;
-  details.slice(0,5).forEach(d=>{
-    html+=`<div style="background:#0c1220;border-radius:8px;padding:10px;margin-top:6px;font-size:11px;color:#ccc">${d.substring(0,200)}</div>`;
-  });
-  html+=`</div>`;
-  document.getElementById('results').innerHTML=html;
-}
-</script>
-</body>
-                                                                                 </html>
+</script></body></html>
